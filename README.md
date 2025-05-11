@@ -119,17 +119,11 @@ Generated: "Photosynthesis is the process by which green plants use sunlight to 
 
 * Achieved high accuracy on educational text classification.
 * Generated coherent scientific text sequences for the generation task.
+* Model get overfitted due to poor quality of dataset but we can improve model by training with quality data
 
 ## Future Work
 
 * Expand datasets to include more granular educational subjects.
 * Improve generation coherence with larger RNN architectures.
 
-## Contributing
-
-Feel free to fork the repository and raise PRs for improvements!
-
-## License
-
-MIT License
 
