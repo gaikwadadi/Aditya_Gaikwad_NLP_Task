@@ -1,129 +1,174 @@
-# Aditya_Gaikwad_NLP_Task
-This assignment aims to evaluate your understanding and practical implementation skills related to Recurrent Neural Networks (RNNs) for Natural Language Processing (NLP) tasks using the Keras library.
 
+# Educational Text NLP using RNNs (Classification & Next Word Generation)
 
-# Educational Text Classification and Next Word Generation
+## Overview
 
-This repository contains two primary NLP tasks:
+This project demonstrates the use of Recurrent Neural Networks (RNNs) with Keras for two Natural Language Processing (NLP) tasks:
 
-1. **Educational Text Classification** - A Bidirectional GRU-based neural network for classifying educational text into categories: Math, Science, History, and English.
-2. **Next Word Generation** - A Simple RNN-based model to generate contextually relevant text for scientific concepts.
+1. **Educational Text Classification**  
+   Classify educational text snippets into predefined categories: Math, Science, History, and English.
 
-## Table of Contents
+2. **Next Word Generation (Auto-completion)**  
+   Generate the next 20 words based on a seed sentence using a model trained on an educational text corpus.
 
-* [Project Structure](#project-structure)
-* [Datasets](#datasets)
-* [Installation](#installation)
-* [Usage](#usage)
-* [Model Architectures](#model-architectures)
-* [Training Details](#training-details)
-* [Evaluation](#evaluation)
-* [Text Generation](#text-generation)
-* [Results](#results)
-* [Future Work](#future-work)
-* [Contributing](#contributing)
-* [License](#license)
+---
+
+## 1. Text Classification
+
+### Task
+
+Given a short educational text snippet, the model classifies it into one of the four categories.
+
+### Dataset
+
+- A manually curated CSV file: `educational_text_classification.csv`
+- Contains labeled short educational sentences under categories: Math, Science, History, and English.
+
+### Preprocessing
+
+- Label encoding using `LabelEncoder`
+- Tokenization and padding using `Tokenizer` and `pad_sequences`
+- Pre-trained word embeddings using GloVe (100-dimensional vectors)
+- Stratified 80/20 train-test split
+- Computation of class weights to handle class imbalance
+
+### Model Architecture
+
+- `Embedding` layer using GloVe vectors
+- Two-layer `Bidirectional GRU`
+- `LayerNormalization` and `Dropout` for regularization
+- `Dense` layer with softmax for multi-class classification
+
+### Training Strategy
+
+- Loss: `Sparse Categorical Crossentropy`
+- Optimizer: `Adam`
+- Metrics: `Accuracy`
+- Callbacks: EarlyStopping, ReduceLROnPlateau
+
+### Evaluation
+
+- Accuracy and loss on the test set
+- Confusion matrix and classification report
+- Weighted F1 score
+
+---
+
+## 2. Next Word Generation
+
+### Task
+
+Given a sentence (at least 10 words), the model generates the next 20 words based on learned patterns from educational content.
+
+### Dataset
+
+- A long educational corpus (`.txt` file): `large_next_word_generation_corpus.txt`
+- Text is lowercased and split into sentences using regex
+
+### Preprocessing
+
+- Tokenization and sequence creation from sentences
+- Input: sequences of words
+- Target: the next word in each sequence
+- Padding to ensure uniform input shape
+
+### Model Architecture
+
+- `Embedding` layer
+- Two stacked `LSTM` layers with dropout
+- Final `Dense` layer with softmax activation
+
+### Training Strategy
+
+- Loss: `Sparse Categorical Crossentropy`
+- Optimizer: `Adam`
+- Callbacks: EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
+
+### Text Generation
+
+- Top-k sampling with temperature control
+- Generates 20 words from a given seed text
+
+---
+
+## How to Run
+
+### Prerequisites
+
+- Python 3.7+
+- TensorFlow
+- NumPy, Pandas, Matplotlib, Seaborn, Scikit-learn
+
+### Steps
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/your-username/edu-nlp-rnn.git
+   cd edu-nlp-rnn
+   ```
+
+2. Install required libraries:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Download GloVe embeddings (100d) if not already present:
+   ```bash
+   wget http://nlp.stanford.edu/data/glove.6B.zip
+   unzip glove.6B.zip
+   ```
+
+4. Run classification model:
+   ```bash
+   python classification_model.py
+   ```
+
+5. Run next word generation model:
+   ```bash
+   python next_word_generation.py
+   ```
+
+---
+
+## Results
+
+### Classification
+
+- Test Accuracy: Reported after model evaluation
+- Confusion Matrix and F1 Score included in output
+
+### Next Word Generation
+
+- Accepts a seed sentence
+- Generates coherent next 20 words
+- Example:
+
+  ```
+  Input: "Mathematics is the study of"
+  Output: "symbols and the rules for manipulating those symbols the systematic science is in the form of explanations and predictions"
+  ```
+
+---
 
 ## Project Structure
 
 ```
-📂 project-root
-│
-├── educational_text_classification.csv         # Dataset for text classification
-├── next_word_generation.csv                    # Dataset for text generation
-│
-├── model_classification.h5                    # Trained classification model
-├── model_generation.h5                        # Trained generation model
-│
-├── tokenizer.pkl                              # Tokenizer for classification model
-├── label_encoder.pkl                          # Label encoder for classification labels
-│
-├── main.py                                    # Main script for running models
-├── utils.py                                   # Helper functions for data preprocessing
-│
-├── README.md                                  # Project documentation
-└── requirements.txt                           # Dependencies
+.
+├── classification_model.py
+├── next_word_generation.py
+├── educational_text_classification.csv
+├── large_next_word_generation_corpus.txt
+├── glove.6B.100d.txt
+├── tokenizer.pkl
+├── label_encoder.pkl
+├── README.md
+└── requirements.txt
 ```
 
-## Datasets
+---
 
-1. **Educational Text Classification Dataset**
+## Future Improvements
 
-   * Contains labeled educational text in four categories: Math, Science, History, and English.
-
-2. **Next Word Generation Dataset**
-
-   * Contains scientific sentences and phrases for building next-word predictions.
-
-## Installation
-
-To set up the environment, run:
-
-```bash
-pip install -r requirements.txt
-```
-
-## Usage
-
-For Educational Text Classification:
-
-```bash
-python main.py --mode classification --input "Newton's laws of motion explain the relationship between a body and the forces acting upon it."
-```
-
-For Next Word Generation:
-
-```bash
-python main.py --mode generation --input "photosynthesis is the process"
-```
-
-## Model Architectures
-
-1. **Educational Text Classification**
-
-   * Bidirectional GRU layers with Layer Normalization and Dense layers for multi-class classification.
-
-2. **Next Word Generation**
-
-   * SimpleRNN architecture with an Embedding layer to generate contextual next words based on input text.
-
-## Training Details
-
-* **Classification Model**:
-
-  * K-Fold Cross-Validation (5 splits)
-  * Class Weight Adjustment for imbalance
-  * Learning Rate Scheduling
-  * Early Stopping and Model Checkpointing
-
-* **Next Word Generation Model**:
-
-  * Early Stopping based on loss
-  * Temperature-based text generation
-
-## Evaluation
-
-* **Confusion Matrix** and **Classification Report** for classification.
-* Accuracy metrics are displayed during training.
-
-## Text Generation
-
-Example:
-
-```
-Input: "Photosynthesis is the process"
-Generated: "Photosynthesis is the process by which green plants use sunlight to synthesize foods from carbon dioxide and water..."
-```
-
-## Results
-
-* Achieved high accuracy on educational text classification.
-* Generated coherent scientific text sequences for the generation task.
-* Model get overfitted due to poor quality of dataset but we can improve model by training with quality data
-
-## Future Work
-
-* Expand datasets to include more granular educational subjects.
-* Improve generation coherence with larger RNN architectures.
-
-
+- Experiment with transformer-based models (e.g., BERT for classification)
+- Use beam search or nucleus sampling for more fluent text generation
+- Add web interface or notebook demo
